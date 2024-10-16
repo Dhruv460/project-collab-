@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Reset Password</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+            rel="stylesheet">
+        <script>
+      var status = '<%- JSON.stringify(status) %>';
+
+      if (JSON.parse(status) == "verified") {
+        if (confirm("Do you want to login?")) {
+          window.location.href = "http://localhost:5173/login";
+        }
+      }
+    </script>
+    </head>
+    <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h1 class="text-2xl font-bold mb-6 text-center">Reset Password for <%=
+                email %></h1>
+            <form action method="post" class="space-y-4">
+                <div>
+                    <label for="password"
+                        class="block text-sm font-medium text-gray-700">New
+                        Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="New Password"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required />
+                </div>
+                <div>
+                    <label for="confirm-password"
+                        class="block text-sm font-medium text-gray-700">Confirm
+                        Password</label>
+                    <input
+                        type="password"
+                        name="confirm-password"
+                        id="confirm-password"
+                        placeholder="Confirm Password"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required />
+                </div>
+                <div>
+                    <input type="submit" value="Submit"
+                        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-150">
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
