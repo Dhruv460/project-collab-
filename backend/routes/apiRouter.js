@@ -1,4 +1,3 @@
-// routes/apiRouter.js
 import express from "express";
 import userRoutes from "./userRoutes.js";
 import projectRoutes from "./projectRoutes.js";
@@ -6,11 +5,15 @@ import notificationsRoutes from "./notificationsRoutes.js";
 import run from "../gemini-api.js";
 import runn from "../friend_bot.js";
 import ChatHistory from "../models/ChatHistory.js";
+import chatRoutes from "./chatRoutes.js"; // Import chat routes
+import messageRoutes from "./MessageRoutes.js";
 const apiRouter = express.Router();
 
 apiRouter.use("/users", userRoutes);
 apiRouter.use("/projects", projectRoutes);
 apiRouter.use("/notifications", notificationsRoutes);
+apiRouter.use("/chats", chatRoutes); // Mount chat routes
+apiRouter.use("/messages", messageRoutes);
 apiRouter.post("/prompt-post", async (req, res) => {
   try {
     const { prompt } = req.body;

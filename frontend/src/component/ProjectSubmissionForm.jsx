@@ -1,40 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ProjectSubmissionForm = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    goals: '',
-    requiredSkills: '',
-    tags: '',
+    title: "",
+    description: "",
+    goals: "",
+    requiredSkills: "",
+    tags: "",
     useAIEnhancement: false,
   });
-
-  const [enhancedDescription, setEnhancedDescription] = useState('');
+  const api_url = import.meta.env.VITE_API_URL;
+  const [enhancedDescription, setEnhancedDescription] = useState("");
   const [isEnhancing, setIsEnhancing] = useState(false);
-  const [editedEnhancedDescription, setEditedEnhancedDescription] = useState('');
+  const [editedEnhancedDescription, setEditedEnhancedDescription] =
+    useState("");
   const handleChange = async (e) => {
     const { name, value, type, checked } = e.target;
     const newFormData = {
       ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     };
 
     setFormData(newFormData);
 
-    if (name === 'useAIEnhancement' && checked) {
+    if (name === "useAIEnhancement" && checked) {
       setIsEnhancing(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        console.error('No token found in local storage');
+        console.error("No token found in local storage");
         setIsEnhancing(false);
         return;
       }
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/projects/enhance-description',
+          `${api_url}/api/projects/enhance-description`,
           {
             description: newFormData.description,
           },
@@ -47,13 +48,13 @@ const ProjectSubmissionForm = () => {
         setEnhancedDescription(response.data.enhancedDescription);
         setEditedEnhancedDescription(response.data.enhancedDescription); // Initialize edited enhanced description with the original enhanced description
       } catch (error) {
-        console.error('Error enhancing description:', error);
+        console.error("Error enhancing description:", error);
       } finally {
         setIsEnhancing(false);
       }
     } else {
-      setEnhancedDescription('');
-      setEditedEnhancedDescription('');
+      setEnhancedDescription("");
+      setEditedEnhancedDescription("");
     }
   };
   const handleEditedEnhancedDescriptionChange = (e) => {
@@ -64,19 +65,21 @@ const ProjectSubmissionForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      console.error('No token found in local storage');
+      console.error("No token found in local storage");
       return;
     }
     try {
       const dataToSubmit = {
         ...formData,
-        description: formData.useAIEnhancement ? editedEnhancedDescription : formData.description,
+        description: formData.useAIEnhancement
+          ? editedEnhancedDescription
+          : formData.description,
       };
 
       const response = await axios.post(
-        'http://localhost:3000/api/projects/submit',
+        `${api_url}/api/projects/submit`,
         dataToSubmit,
         {
           headers: {
@@ -85,9 +88,9 @@ const ProjectSubmissionForm = () => {
         }
       );
       console.log(response.data);
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Error submitting project:', error);
+      console.error("Error submitting project:", error);
     }
   };
 
@@ -100,7 +103,9 @@ const ProjectSubmissionForm = () => {
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Project Title */}
           <div>
-            <label htmlFor="title" className="sr-only">Project Title</label>
+            <label htmlFor="title" className="sr-only">
+              Project Title
+            </label>
             <input
               type="text"
               name="title"
@@ -114,7 +119,9 @@ const ProjectSubmissionForm = () => {
 
           {/* Project Description */}
           <div>
-            <label htmlFor="description" className="sr-only">Project Description</label>
+            <label htmlFor="description" className="sr-only">
+              Project Description
+            </label>
             <textarea
               name="description"
               value={formData.description}
@@ -127,7 +134,9 @@ const ProjectSubmissionForm = () => {
 
           {/* Project Goals */}
           <div>
-            <label htmlFor="goals" className="sr-only">Project Goals</label>
+            <label htmlFor="goals" className="sr-only">
+              Project Goals
+            </label>
             <textarea
               name="goals"
               value={formData.goals}
@@ -140,7 +149,9 @@ const ProjectSubmissionForm = () => {
 
           {/* Required Skills */}
           <div>
-            <label htmlFor="requiredSkills" className="sr-only">Required Skills</label>
+            <label htmlFor="requiredSkills" className="sr-only">
+              Required Skills
+            </label>
             <input
               type="text"
               name="requiredSkills"
@@ -154,7 +165,9 @@ const ProjectSubmissionForm = () => {
 
           {/* Tags */}
           <div>
-            <label htmlFor="tags" className="sr-only">Tags</label>
+            <label htmlFor="tags" className="sr-only">
+              Tags
+            </label>
             <input
               type="text"
               name="tags"
@@ -176,23 +189,27 @@ const ProjectSubmissionForm = () => {
                 onChange={handleChange}
                 className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
               />
-              <span className="ml-2 text-gray-900 dark:text-gray-100">Enhance description with AI</span>
+              <span className="ml-2 text-gray-900 dark:text-gray-100">
+                Enhance description with AI
+              </span>
             </label>
           </div>
 
           {/* Enhanced Description */}
           {formData.useAIEnhancement && !isEnhancing && (
-        <div>
-          <label htmlFor="enhancedDescription" className="sr-only">Enhanced Description</label>
-          <textarea
-            name="enhancedDescription"
-            value={editedEnhancedDescription}
-            onChange={handleEditedEnhancedDescriptionChange}
-            placeholder="Enhanced Description"
-            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-          />
-        </div>
-      )}
+            <div>
+              <label htmlFor="enhancedDescription" className="sr-only">
+                Enhanced Description
+              </label>
+              <textarea
+                name="enhancedDescription"
+                value={editedEnhancedDescription}
+                onChange={handleEditedEnhancedDescriptionChange}
+                placeholder="Enhanced Description"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              />
+            </div>
+          )}
 
           {isEnhancing && <div>Loading enhanced description...</div>}
 

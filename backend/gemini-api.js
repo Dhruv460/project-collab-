@@ -1,15 +1,13 @@
-
+// Chatgpt ki jay
 function stripMarkdown(text) {
   return text
-    .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
-    .replace(/__(.*?)__/g, '$1') // Remove underline
-    .replace(/\*(.*?)\*/g, '$1') // Remove italics
-    .replace(/_(.*?)_/g, '$1') // Remove italics
-    .replace(/`(.*?)`/g, '$1') // Remove inline code
-    .replace(/~~(.*?)~~/g, '$1'); // Remove strikethrough
+    .replace(/\*\*(.*?)\*\*/g, "$1") // Remove bold
+    .replace(/__(.*?)__/g, "$1") // Remove underline
+    .replace(/\*(.*?)\*/g, "$1") // Remove italics
+    .replace(/_(.*?)_/g, "$1") // Remove italics
+    .replace(/`(.*?)`/g, "$1") // Remove inline code
+    .replace(/~~(.*?)~~/g, "$1"); // Remove strikethrough
 }
-
-
 
 import {
   GoogleGenerativeAI,
@@ -22,7 +20,8 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
   model: "gemini-1.5-flash",
-  systemInstruction: "You are the best content creator. You enhance users' content with better keywords and grammar and provide the enhanced description of the project idea the user has posted as a prompt with better paragraphing, titles, and clarity. Provide the enhanced description in plain text, using simple bullet points or numbering for lists without using asterisks, markdown, or any other formatting symbols. Format it so that it is ready to be directly posted on a platform without further modification.",
+  systemInstruction:
+    "You are the best content creator. You enhance users' content with better keywords and grammar and provide the enhanced description of the project idea the user has posted as a prompt with better paragraphing, titles, and clarity. Provide the enhanced description in plain text, using simple bullet points or numbering for lists without using asterisks, markdown, or any other formatting symbols. Format it so that it is ready to be directly posted on a platform without further modification.",
 });
 
 const generationConfig = {

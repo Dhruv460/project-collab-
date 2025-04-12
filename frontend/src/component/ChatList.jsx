@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const ChatList = ({ userId }) => {
   const [chats, setChats] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-
+  const api_url = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/chats/${userId}`);
+        const response = await axios.get(`${api_url}/api/chats/${userId}`);
         const chatData = response.data;
         setChats(chatData);
       } catch (error) {
-        console.error(`Error fetching chats for user ${userId}:`, error.response?.data || error.message);
+        console.error(
+          `Error fetching chats for user ${userId}:`,
+          error.response?.data || error.message
+        );
       }
     };
     fetchChats();
@@ -23,13 +26,18 @@ const ChatList = ({ userId }) => {
     e.preventDefault();
     setIsSending(true);
     try {
-      const response = await axios.post(`http://localhost:3000/api/chats/${userId}`, { message: newMessage });
+      const response = await axios.post(`${api_url}/api/chats/${userId}`, {
+        message: newMessage,
+      });
       const newChat = response.data;
       setChats([...chats, newChat]);
-      setNewMessage('');
+      setNewMessage("");
       setIsSending(false);
     } catch (error) {
-      console.error(`Error sending message to user ${userId}:`, error.response?.data || error.message);
+      console.error(
+        `Error sending message to user ${userId}:`,
+        error.response?.data || error.message
+      );
       setIsSending(false);
     }
   };
@@ -58,7 +66,7 @@ const ChatList = ({ userId }) => {
           disabled={isSending}
           className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition"
         >
-          {isSending? 'Sending...' : 'Send'}
+          {isSending ? "Sending..." : "Send"}
         </button>
       </form>
     </div>

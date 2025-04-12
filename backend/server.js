@@ -13,6 +13,7 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
@@ -33,7 +34,6 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
-// API routes
 app.use(
   "/api",
   (req, res, next) => {
@@ -64,7 +64,7 @@ app.post("/forgot-password", async (req, res) => {
 
     var mailOptions = {
       from: "mradhruv27@gmail.com",
-      to: email, // Corrected email recipient here
+      to: email,
       subject: "Password Reset",
       text: link,
     };
@@ -130,13 +130,70 @@ app.post("/reset-password/:id/:token", async (req, res) => {
   }
 });
 
+let onlineUsers = new Map(); // Map<userId, socketId>
+
 // Socket.io connection handling
 io.on("connection", (socket) => {
   console.log(`Socket connected: ${socket.id}`);
 
-  // Handle events here
+  // 1. Setup: User identifies themselves after connection
+  socket.on("setup", (userData) => {
+    if (userData && userData._id) {
+      // Create a room for this specific user based on their MongoDB ID
+      socket.join(userData._id.toString());
+      onlineUsers.set(userData._id.toString(), socket.id);
+      console.log(
+        `<span class="math-inline">\{userData\.username\} \(</span>{userData._id}) joined their personal room and is online.`
+      );
+      socket.emit("connected"); // Acknowledge setup
+      // Optionally broadcast online users list if needed
+      io.emit("online users", Array.from(onlineUsers.keys()));
+    } else {
+      console.log("Setup failed: userData or _id missing");
+    }
+  });
+
+  // 2. Join Chat Room: User explicitly joins a room when they open a chat
+  socket.on("join chat", (room) => {
+    socket.join(room); // Room is the chatId
+    console.log(`User ${socket.id} joined room: ${room}`);
+  });
+
+  // 3. Typing Indicators (Optional)
+  socket.on("typing", (room) => {
+    // Broadcast to everyone in the room *except* the sender
+    socket.in(room).emit("typing", room); // Send room ID so frontend knows which chat is typing
+    console.log(`User ${socket.id} is typing in room: ${room}`);
+  });
+  socket.on("stop typing", (room) => {
+    // Broadcast to everyone in the room *except* the sender
+    socket.in(room).emit("stop typing", room);
+    console.log(`User ${socket.id} stopped typing in room: ${room}`);
+  });
+
+  // Note: 'new message' is now primarily handled by the sendMessage controller emitting
+  // We keep the listener here mainly for logging or potential direct socket-only messages if designed differently.
+  // socket.on("new message", (newMessageReceived) => {
+  //     // ... logic if messages were sent *only* via socket ...
+  // });
+
+  // Handle disconnection
   socket.on("disconnect", () => {
     console.log(`Socket disconnected: ${socket.id}`);
+    // Find which user disconnected and remove them
+    let userIdToRemove = null;
+    for (let [userId, sockId] of onlineUsers.entries()) {
+      if (sockId === socket.id) {
+        userIdToRemove = userId;
+        break;
+      }
+    }
+    if (userIdToRemove) {
+      onlineUsers.delete(userIdToRemove);
+      console.log(`User ${userIdToRemove} went offline.`);
+      // Optionally broadcast updated online users list
+      io.emit("online users", Array.from(onlineUsers.keys()));
+    }
   });
 });
 

@@ -1,4 +1,3 @@
-// models/ChatHistory.js
 import mongoose from "mongoose";
 
 const chatHistorySchema = new mongoose.Schema({

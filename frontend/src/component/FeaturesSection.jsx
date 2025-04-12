@@ -14,9 +14,9 @@ const FeaturesSection = () => {
             <div className="feature-text">
               <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">Collaborate</h3>
               <p className="text-gray-700 dark:text-gray-400">Work together with your team in real-time.</p>
-            </div>
+            </div>  
           </div>
-
+              
           {/* Feature 2 */}
           <div className="feature bg-white dark:bg-gray-700 rounded-lg p-6 shadow-md">
             <div className="feature-icon bg-yellow-500 text-white rounded-full w-12 h-12 flex items-center justify-center mb-4">

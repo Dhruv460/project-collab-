@@ -1,22 +1,22 @@
-import React, { useState, useContext, useRef, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import { ThemeContext } from '../ThemeContext'; // Import ThemeContext
+import React, { useState, useContext, useRef, useEffect } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import { ThemeContext } from "../ThemeContext"; // Import ThemeContext
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [loading, setLoading] = useState(false); // New loading state
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { theme } = useContext(ThemeContext); // Use the theme from context
   const canvasRef = useRef(null);
-
+  const api_url = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
 
     const resizeCanvas = () => {
       canvas.width = window.innerWidth;
@@ -37,7 +37,7 @@ const Login = () => {
           size: Math.random() * 5 + 2,
           speedX: Math.random() * 4 - 2,
           speedY: Math.random() * 4 - 2,
-          color: `hsl(${Math.random() * 360}, 50%, 50%)`
+          color: `hsl(${Math.random() * 360}, 50%, 50%)`,
         });
       }
     };
@@ -73,10 +73,10 @@ const Login = () => {
     initParticles();
     drawParticles();
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener("resize", resizeCanvas);
 
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener("resize", resizeCanvas);
     };
   }, []);
 
@@ -88,21 +88,21 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 0.0000001));
+      await new Promise((resolve) => setTimeout(resolve, 0.0000001));
 
-      const response = await axios.post('http://localhost:3000/api/users/login', formData);
+      const response = await axios.post(`${api_url}/api/users/login`, formData);
       console.log(response.data);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data._id);
-      localStorage.setItem('username', response.data.username)
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userId", response.data._id);
+      localStorage.setItem("username", response.data.username);
       console.log(`userId: ${response.data._id}`);
 
-      window.dispatchEvent(new Event('storage'));
+      window.dispatchEvent(new Event("storage"));
 
       navigate(`/chatAi`);
     } catch (error) {
       console.error(error);
-      setError('Invalid email or password');
+      setError("Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -110,14 +110,17 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <canvas ref={canvasRef} className="absolute top-0 left-0 w-full h-full"></canvas>
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full"
+      ></canvas>
       <div className="relative max-w-md w-full bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 z-10">
         <div>
           <h2 className="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900 dark:text-gray-100">
             Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm leading-5 text-gray-600 dark:text-gray-400">
-            Or{' '}
+            Or{" "}
             <Link
               to="/register"
               className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
@@ -128,7 +131,10 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+            role="alert"
+          >
             <span className="block sm:inline">{error}</span>
           </div>
         )}
@@ -138,7 +144,10 @@ const Login = () => {
           ) : (
             <div className="rounded-md shadow-sm">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Email address
                 </label>
                 <input
@@ -149,11 +158,14 @@ const Login = () => {
                   required
                   onChange={handleChange}
                   value={formData.email}
-                  className={`appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-gray-100 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+                  className={`appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-gray-100 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}
                 />
               </div>
               <div className="-mt-px">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                >
                   Password
                 </label>
                 <input
@@ -164,7 +176,7 @@ const Login = () => {
                   required
                   onChange={handleChange}
                   value={formData.password}
-                  className={`appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-gray-100 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+                  className={`appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 text-gray-900 dark:text-gray-100 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm ${theme === "dark" ? "bg-gray-800" : "bg-white"}`}
                 />
               </div>
             </div>
@@ -177,7 +189,10 @@ const Login = () => {
                 type="checkbox"
                 className="h-4 w-4 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900 dark:text-gray-300"
+              >
                 Remember me
               </label>
             </div>
@@ -196,7 +211,7 @@ const Login = () => {
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               disabled={loading}
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>

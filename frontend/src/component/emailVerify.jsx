@@ -7,11 +7,11 @@ const EmailVerify = () => {
   const [validUrl, setValidUrl] = useState(true);
   const param = useParams();
   console.log(`param id is: ${param.id} and param token is: ${param.token}`);
-
+  const api_url = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const verifyEmailUrl = async () => {
       try {
-        const url = `http://localhost:3000/api/users/${param.id}/verify/${param.token}`;
+        const url = `${api_url}/api/users/${param.id}/verify/${param.token}`;
         const { data } = await axios.get(url);
         console.log(data);
         setValidUrl(true);
@@ -28,8 +28,14 @@ const EmailVerify = () => {
       {validUrl ? (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
           <div className="text-center">
-            <img src="/right.jpg" alt="success_img" className="mx-auto w-24 h-24 mb-4" />
-            <h1 className="text-2xl font-semibold text-green-600">Email verified successfully</h1>
+            <img
+              src="/right.jpg"
+              alt="success_img"
+              className="mx-auto w-24 h-24 mb-4"
+            />
+            <h1 className="text-2xl font-semibold text-green-600">
+              Email verified successfully
+            </h1>
             <Link to="/login">
               <button className="mt-4 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                 Login

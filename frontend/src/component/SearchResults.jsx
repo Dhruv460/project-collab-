@@ -1,25 +1,25 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useLocation, Link } from "react-router-dom";
 
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 
 const SearchResults = () => {
-  const query = useQuery().get('query');
+  const query = useQuery().get("query");
   const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false); // Add loading state
-
+  const api_url = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const fetchSearchResults = async () => {
       setLoading(true); // Set loading state before fetching
       try {
-        const response = await axios.get('http://localhost:3000/api/users/search', {
-          params: { query }
+        const response = await axios.get(`${api_url}/api/users/search`, {
+          params: { query },
         });
-        console.log('Search response:', response.data); // Log the response data
+        console.log("Search response:", response.data); // Log the response data
         if (Array.isArray(response.data)) {
           setResults(response.data);
         } else {
@@ -27,7 +27,7 @@ const SearchResults = () => {
         }
       } catch (error) {
         setError(error);
-        console.error('Error fetching search results:', error);
+        console.error("Error fetching search results:", error);
       } finally {
         setLoading(false); // Set loading state after fetching
       }
@@ -43,7 +43,11 @@ const SearchResults = () => {
   }
 
   if (error) {
-    return <div className="text-red-600 text-center mt-4">Error fetching search results: {error.message}</div>;
+    return (
+      <div className="text-red-600 text-center mt-4">
+        Error fetching search results: {error.message}
+      </div>
+    );
   }
 
   return (
@@ -55,22 +59,45 @@ const SearchResults = () => {
             <div key={result._id} className="bg-white shadow-md rounded-lg p-4">
               <div className="flex items-center mb-4">
                 <img
-                  src={result.avatar || 'default-avatar.png'}
+                  src={result.avatar || "default-avatar.png"}
                   alt={result.username}
                   className="w-12 h-12 object-cover rounded-full mr-4"
                 />
                 <div>
-                  <Link to={`/profile/${result._id}`} className="text-xl font-bold text-blue-500 hover:underline">
+                  <Link
+                    to={`/profile/${result._id}`}
+                    className="text-xl font-bold text-blue-500 hover:underline"
+                  >
                     {result.username}
                   </Link>
                   <p className="text-gray-700">{result.bio}</p>
                 </div>
               </div>
               <div>
-                <p className="text-gray-700"><strong>Skills:</strong> {Array.isArray(result.skills) ? result.skills.join(', ') : 'None'}</p>
-                <p className="text-gray-700"><strong>Interests:</strong> {Array.isArray(result.interests) ? result.interests.join(', ') : 'None'}</p>
-                <p className="text-gray-700"><strong>Past Projects:</strong> {Array.isArray(result.pastProjects) ? result.pastProjects.join(', ') : 'None'}</p>
-                <p className="text-gray-700"><strong>Endorsements:</strong> {Array.isArray(result.endorsements) ? result.endorsements.join(', ') : 'None'}</p>
+                <p className="text-gray-700">
+                  <strong>Skills:</strong>{" "}
+                  {Array.isArray(result.skills)
+                    ? result.skills.join(", ")
+                    : "None"}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Interests:</strong>{" "}
+                  {Array.isArray(result.interests)
+                    ? result.interests.join(", ")
+                    : "None"}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Past Projects:</strong>{" "}
+                  {Array.isArray(result.pastProjects)
+                    ? result.pastProjects.join(", ")
+                    : "None"}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Endorsements:</strong>{" "}
+                  {Array.isArray(result.endorsements)
+                    ? result.endorsements.join(", ")
+                    : "None"}
+                </p>
               </div>
             </div>
           ))

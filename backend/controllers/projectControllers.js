@@ -5,7 +5,6 @@ import Notification from "../models/Notifications.js";
 import Chat from "../models/Chat.js";
 import run from "../gemini-api.js";
 
-// getChat
 export const getChat = async (req, res) => {
   try {
     // console.log(`id for get chat is ${req.params.id}`)
@@ -32,9 +31,9 @@ export const getChat = async (req, res) => {
   }
 };
 
-// sendMessage
+// message bhejoooo
 export const sendMessage = async (req, res, io) => {
-  console.log("Request body:", req.body); // Debugging line
+  console.log("Request body:", req.body);
   const { projectId, text } = req.body;
 
   console.log(`project id for send message:${projectId}`);
@@ -68,14 +67,14 @@ export const followProject = async (req, res, io) => {
       return res.status(404).json({ message: "Project not found" });
     }
     console.log(`project owner :${project.teamMembers[0]}`);
-    const projectOwner = await User.findById(project.teamMembers[0]); // Assuming first member is owner
+    const projectOwner = await User.findById(project.teamMembers[0]);
     if (!projectOwner) {
       console.log("Project owner not found");
       return res.status(404).json({ message: "Project owner not found" });
     }
 
     const notification = new Notification({
-      recipient: projectOwner._id, // Set recipient to project owner's ID
+      recipient: projectOwner._id,
       sender: req.userId,
       project: project._id,
       type: "followRequest",
@@ -89,7 +88,7 @@ export const followProject = async (req, res, io) => {
 
     const projectOwnerSocketId = await getUserSocketId(projectOwner._id);
     console.log(`project owner socket id is${projectOwnerSocketId}`);
-    // Send the notification to the project owner's socket ID
+
     io.emit("notification", notification);
 
     res.json({ message: "Follow request sent" });
@@ -99,15 +98,13 @@ export const followProject = async (req, res, io) => {
   }
 };
 
-// Helper function to get a user's socket ID
 const getUserSocketId = async (userId) => {
-  // Assuming you have a users collection with socket IDs
   const user = await User.findById(userId);
   return user.socketId;
 };
 
 export const handleFollowRequest = async (req, res, io) => {
-  const action = req.body.action; // 'accept' or 'reject'
+  const action = req.body.action;
   const notificationId = req.params.id;
   try {
     const notification = await Notification.findById(notificationId);
@@ -185,18 +182,16 @@ export const submitProject = async (req, res, io) => {
       user: {
         id: req.userId,
         username: user.username,
-        profileImage: user.avatar, // Assuming 'avatar' stores the profile picture URL
+        profileImage: user.avatar,
       },
     };
 
-    // Check and parse requiredSkills if defined
     if (requiredSkills) {
       newProjectData.requiredSkills = requiredSkills
         .split(",")
         .map((skill) => skill.trim());
     }
 
-    // Check and parse tags if defined
     if (tags) {
       newProjectData.tags = tags.split(",").map((tag) => tag.trim());
     }
@@ -222,13 +217,12 @@ export const enhanceDescription = async (req, res) => {
   }
 };
 
-// Update a project
 export const updateProject = async (req, res, io) => {
   try {
     const project = await Project.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    io.emit("projectUpdated", project); // Emit 'projectUpdated' event
+    io.emit("projectUpdated", project);
     res.json(project);
   } catch (error) {
     console.error(error);
@@ -240,14 +234,12 @@ export const getProjects = async (req, res) => {
   try {
     const projects = await Project.find();
     res.json(projects);
-    // console.log(projects);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Get a single project
 export const getProject = async (req, res) => {
   try {
     const project = await Project.findById(req.params.id).populate(
@@ -264,7 +256,6 @@ export const getProject = async (req, res) => {
   }
 };
 
-// Like a project
 export const likeProject = async (req, res, io) => {
   try {
     const project = await Project.findById(req.params.id);
@@ -272,29 +263,24 @@ export const likeProject = async (req, res, io) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // Ensure project.likes is initialized as an array
     if (!project.likes) {
       project.likes = [];
     }
 
-    // Check if user has already liked this project
     const alreadyLiked = project.likes.some((userId) =>
       userId.equals(req.userId)
     );
 
     if (alreadyLiked) {
-      // User has already liked, so unlike
       project.likes = project.likes.filter(
         (userId) => !userId.equals(req.userId)
       );
     } else {
-      // User hasn't liked, so like the project
       project.likes.push(req.userId);
     }
 
     await project.save();
 
-    // Emit event to update clients
     io.emit("projectUpdated", project);
 
     res.json(project);
@@ -304,7 +290,6 @@ export const likeProject = async (req, res, io) => {
   }
 };
 
-// Comment on a project
 export const commentProject = async (req, res, io) => {
   const { comment } = req.body;
   try {
@@ -313,13 +298,11 @@ export const commentProject = async (req, res, io) => {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // Fetch the user to get the username
     const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Add comment with user's ID and username
     project.comments.push({
       user: req.userId,
       username: user.username,
@@ -328,7 +311,6 @@ export const commentProject = async (req, res, io) => {
     });
     await project.save();
 
-    // Emit event to update clients
     io.emit("projectUpdated", project);
 
     res.json(project);
@@ -350,26 +332,21 @@ export const getMyProjects = async (req, res) => {
   }
 };
 
-// Delete a project
 export const deleteProject = async (req, res, io) => {
   const projectId = req.params.id;
   console.log(`dhruv:${projectId}`);
   try {
-    // Find the project by ID
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
 
-    // Ensure only the project owner can delete the project
     // if (!project.teamMembers.includes(req.userId)) {
     //   return res.status(403).json({ message: 'You are not authorized to delete this project' });
     // }
 
-    // Delete the project from the database
     await Project.deleteOne({ _id: projectId });
 
-    // Emit event to update clients
     io.emit("projectDeleted", projectId);
 
     res.json({ message: "Project deleted successfully" });

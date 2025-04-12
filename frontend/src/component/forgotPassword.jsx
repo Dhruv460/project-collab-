@@ -13,7 +13,7 @@ const ForgotPassword = () => {
   const { theme } = useContext(ThemeContext);
   const toast = useToast();
   const canvasRef = useRef(null);
-
+ const api_url = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -88,7 +88,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setIsSending(true);
     try {
-      const response = await axios.post('http://localhost:3000/forgot-password', { email });
+      const response = await axios.post(`${api_url}/forgot-password`, { email });
       if (response.status === 200) {
         setMessage(response.data.message);
         setError('');

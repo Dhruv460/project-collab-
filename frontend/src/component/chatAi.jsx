@@ -1,29 +1,30 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import '../index.css';
-import { AuthContext } from '../AuthContext';
-import { ThemeContext } from '../ThemeContext';
+import React, { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import "../index.css";
+import { AuthContext } from "../AuthContext";
+import { ThemeContext } from "../ThemeContext";
 
 const ChatAi = () => {
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
-  const userId = localStorage.getItem('userId');
+  const userId = localStorage.getItem("userId");
   // const { username } = useContext(AuthContext);
   const { theme } = useContext(ThemeContext);
-  const token = localStorage.getItem('token');
-
+  const token = localStorage.getItem("token");
+  const api_url = import.meta.env.VITE_API_URL;
+  console.log(api_url);
   useEffect(() => {
     const fetchChatHistory = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/chat-history/${userId}`, {
+        const res = await axios.get(`${api_url}/api/chat-history/${userId}`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         setChatHistory(res.data);
       } catch (error) {
-        console.error('Error fetching chat history:', error);
+        console.error("Error fetching chat history:", error);
       }
     };
 
@@ -35,7 +36,7 @@ const ChatAi = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -45,27 +46,33 @@ const ChatAi = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3000/api/prompt', { userId, prompt }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const res = await axios.post(
+          `${api_url}/api/prompt`,
+        { userId, prompt },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
       const newChat = { prompt, response: res.data };
       setChatHistory((prevHistory) => [...prevHistory, newChat]);
-      setPrompt('');
+      setPrompt("");
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const getInitial = (name) => {
-    return name ? name.charAt(0).toUpperCase() : '';
+    return name ? name.charAt(0).toUpperCase() : "";
   };
 
   return (
-    <div className={`chat-container ${theme === 'dark' ? 'dark-mode' : 'light-mode'}`}>
+    <div
+      className={`chat-container ${theme === "dark" ? "dark-mode" : "light-mode"}`}
+    >
       <div className="chat-sidebar">
         <h2>Chat History</h2>
         <ul>
@@ -78,7 +85,9 @@ const ChatAi = () => {
       </div>
       <div className="chat-main">
         <header className="chat-header">
-          <h1>Chat with <b>A Friendly Chat bot </b></h1>
+          <h1>
+            Chat with <b>A Friendly Chat bot </b>
+          </h1>
         </header>
         <div className="chat-messages">
           {chatHistory.map((chat, index) => (
@@ -90,7 +99,7 @@ const ChatAi = () => {
                       {getInitial(username)}
                     </div> */}
                     <div>you: {chat.prompt}</div>
-                  </strong> 
+                  </strong>
                 </div>
                 <div className="chat-response">
                   <strong>AI:</strong> {chat.response}
@@ -108,7 +117,7 @@ const ChatAi = () => {
             className="chat-input"
           />
           <button type="submit" className="chat-button" disabled={loading}>
-            {loading ? 'Sending...' : 'Send'}
+            {loading ? "Sending..." : "Send"}
           </button>
         </form>
       </div>
