@@ -84,12 +84,15 @@ const ProjectListing = () => {
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         ); // Sort projects by createdAt in descending order
         console.log(projectsData);
+        // console.log(`dhruv:${response.data[0].user._id}`);
         // console.log(`dhruv:${response.data[0]._id}`)
 
         const likes = projectsData.reduce((acc, project) => {
           acc[project._id] = project.likes && project.likes.includes(userId);
           return acc;
         }, {});
+        console.log("project ka user");
+        console.log(response.data[0].user.id);
         setProjects(projectsData);
         setUserLikes(likes);
         setLoading(false);
@@ -277,9 +280,15 @@ const ProjectListing = () => {
                         }
                         alt={project.user.username}
                       />
-                      <p className="text-gray-700 dark:text-gray-300 font-bold">
+                      <Link
+                        to={`/profile/${project.user.id}`}
+                        className="text-gray-700 dark:text-gray-300 font-bold hover:underline"
+                      >
                         {project.user.username}
-                      </p>
+                      </Link>
+                      {/* <p className="text-gray-700 dark:text-gray-300 font-bold">
+                        {project.user.username}
+                      </p> */}
                     </div>
                     <img
                       className="h-48 w-full object-cover"

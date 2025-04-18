@@ -133,6 +133,12 @@ const Header = () => {
                 >
                   AI-Chat
                 </Link>
+                <Link
+                  to="/chats"
+                  className="text-white hover:text-gray-300 transform transition duration-300 hover:scale-105"
+                >
+                  Messages
+                </Link>
               </>
             )}
           </nav>
@@ -306,20 +312,20 @@ const Header = () => {
               >
                 Home
               </Link>
-              <Link
+              {/* <Link
                 to="/about"
                 onClick={toggleSidebar}
                 className="block px-4 py-2 rounded hover:bg-gray-700 transition-colors"
               >
                 About
-              </Link>
-              <Link
+              </Link> */}
+              {/* <Link
                 to="/contact"
                 onClick={toggleSidebar}
                 className="block px-4 py-2 rounded hover:bg-gray-700 transition-colors"
               >
                 Contact
-              </Link>
+              </Link> */}
               {token && (
                 <>
                   <Link
@@ -347,6 +353,13 @@ const Header = () => {
                   >
                     AI-Chat
                   </Link>
+                  <Link
+                    to={`/profile/${userId}`}
+                    onClick={toggleSidebar}
+                    className="block px-4 py-2 rounded hover:bg-gray-700 transition-colors"
+                  >
+                    Profile
+                  </Link>
                   {/* Add My Projects link to sidebar if desired */}
                   <Link
                     to={`/myprojects`}
@@ -356,13 +369,6 @@ const Header = () => {
                     My Projects
                   </Link>
                   {/* Add Profile link to sidebar if desired */}
-                  <Link
-                    to={`/profile/${userId}`}
-                    onClick={toggleSidebar}
-                    className="block px-4 py-2 rounded hover:bg-gray-700 transition-colors"
-                  >
-                    Profile
-                  </Link>
                 </>
               )}
             </nav>

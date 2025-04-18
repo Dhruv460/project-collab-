@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import User from "../models/User.js";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { generateToken } from "../middleware/authMiddleware.js";
 import cloudinary from "../config/cloudinary.js";
 import Token from "../models/token.js";
