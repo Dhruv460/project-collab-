@@ -60,7 +60,8 @@ const AppContent = () => {
       </Routes>
       {isHomePage && <FeaturesSection />}
       {isHomePage && <Testimonials />}
-      <Footer />
+      {/* <Footer /> */}
+      {location.pathname !== "/chatAi" && <Footer />}
       {/* <Route path="/chat/:projectId" element= {<Chat/>} /> */}
       {/* Add the ChatComponent here */}
     </>
